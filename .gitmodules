@@ -1,0 +1,3 @@
+[submodule "ifn649-interface"]
+	path = ifn649-interface
+	url = https://github.com/JoshuaSowerby/ifn649-interface.git
