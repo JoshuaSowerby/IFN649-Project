@@ -1,0 +1,9 @@
+|---aws
+|	|
+|	|---py file to read MQTT topic and send to DynamoDB
+|
+|---raspberry
+|	|
+|	|---py file to recieve BT from teensy and send to MQTT topic
+|	|---py file to send commands from MQTT to Teensy via BT
+|	

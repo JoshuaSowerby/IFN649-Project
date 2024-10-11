@@ -1,0 +1,82 @@
+void setup(){
+
+//setup sensors, calibrate
+
+}
+
+
+void loop(){
+	
+	//if mode=xyz?
+	
+	//record and send sensor_value
+	sensor_value = ...;
+	out=encrypt(sensor_value+out_count);
+	Serial1.print(out);
+	out_count+=1;
+	//could also give warning values. have other end loop set warnings until it works
+	
+	//looking for input
+	//https://forum.arduino.cc/t/read-integer-from-serial-monitor/533609/3
+	//https://forum.arduino.cc/t/solved-switch-case-with-strings/45742/6
+	string input= Serial.read(); // can be -1 if read error
+	
+	//split input into input_code, input_count and input_message
+	
+	if (input_count>last_count){
+		last_count=input_count;
+		switch(input_code) { 
+			case SET_SENSOR_WARNING:
+				sensor_warning=input_message
+			   break;
+
+			case ENCRYPTION_KEY_SYNC:
+			   // handle ‘2’
+			   //loop till resolved
+			   break;
+
+			default:
+			   // handle unwanted input here
+			   break;
+	   }
+	}
+	if (sensor_warning>sensor_value){
+		//activate warning
+	}
+	
+	
+	
+}
+
+/*
+switch (var) {
+  case 1:
+    // do something when var equals 1
+    break;
+  case 2:
+    // do something when var equals 2
+    break;
+  default:
+    // if nothing else matches, do the default
+    // default is optional
+    break;
+}
+
+or
+
+const int CASE1 = 324343546;
+const int CASE2 = 897456344;
+
+switch (var) {
+  case CASE1:
+    // do something when var equals 1
+    break;
+  case CASE2:
+    // do something when var equals 2
+    break;
+  default:
+    // if nothing else matches, do the default
+    // default is optional
+    break;
+}
+*/
