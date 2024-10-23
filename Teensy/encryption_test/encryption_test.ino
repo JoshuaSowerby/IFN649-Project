@@ -6,9 +6,9 @@ DHT dht(DHTPIN, DHTTYPE);
 
 //various pins
 #define LEDPIN 11
-#define BUZZER 14
-#define SOIL_PIN 13 //A8
-#define LIGHTPIN 20//A9
+#define BUZZER 13
+#define SOIL_PIN 12
+#define LIGHTPIN A9
 
 
 //bluetooth pins
@@ -22,10 +22,10 @@ const int BOX_ID = 0;
 //int aes_key;
 String key;
 int COUNTER = 0;
-float temperature_warning=9999;
-float humidity_warning=9999;
-int light_warning=999; //0 is high light
-int soil_warning=0;//0 is low moisture
+float temperature_warning=999;
+float humidity_warning=999;
+int light_warning=999;
+int soil_warning=999;
 bool buzzer = false;
 bool led = false;
 int out_counter=0;
@@ -80,7 +80,7 @@ void loop() {
   //extract counter and convert to integer, if you can't ignore
   //compare 
   if (true){//(counter > COUNTER){
-    //Serial1.println(code);
+    Serial1.println(code);
     COUNTER = counter;
     switch(code){//we dont want breaks as we always want to run the default then break...there is another way to do this
       //change key
@@ -120,8 +120,6 @@ void loop() {
         //convert cmd to float/int
         temperature_warning=cmd;
         code=0000;
-        Serial.print("temperature warning changed to ");
-        Serial.println(temperature_warning);
         //break;
       case 9001:
         //humidity warning
@@ -178,35 +176,11 @@ void loop() {
         Serial.print(";");
         Serial.println(counter);
         */
-        //high light = 0, low moisture = 0
-        if ((temperature_warning<=temperature)||(humidity_warning<=humidity)||(soil_warning>=soil)||(light_warning<=light)){//((temperature_warning>=temperature)||(humidity_warning>=humidity)||(soil_warning<=soil)||(light_warning<=light)){
-          digitalWrite(BUZZER, HIGH);
-          /*
-          Serial.print("temperature_warning: ");
-          Serial.println(temperature_warning);
-          Serial.print("temperature: ");
-          Serial.println(temperature);
-
-          Serial.print("humidity_warning");
-          Serial.println(humidity_warning);
-          Serial.print("humidity");
-          Serial.println(humidity);
-
-          Serial.print("soil_warning");
-          Serial.println((soil_warning));
-          Serial.print("soil");
-          Serial.println((soil));
-          
-          Serial.print("light_warning");
-          Serial.println((light_warning));
-          Serial.print("light");
-          Serial.println((light));
-
-          
-          delay(3000);*/
+        if ((temperature_warning<=temperature)||(humidity_warning<=humidity)||(soil_warning<=soil)||(light_warning<=light)){
+          digitalWrite(BUZZER, HIGH)
         }
         else{
-          digitalWrite(BUZZER, LOW);
+          digitalWrite(BUZZER, LOW)
         }
         code=0;
         break;

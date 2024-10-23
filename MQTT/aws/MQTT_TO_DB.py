@@ -1,0 +1,46 @@
+import paho.mqtt.client as mqtt
+from IP import IP
+
+'''
+remove, the updated version can be found in the interface
+'''
+
+boxid=1#import
+"""
+from app import *
+with app.app_context():
+    #code here
+"""
+def on_connect(client, userdata, flags, rc): #func for making connection
+    print("connected to MQQT")
+    print(f"Connection result: {str(rc)}")
+          
+    client.subscribe(f"{boxid}/output")
+def on_message(client, userdata, msg): #func for sending message
+    print(msg.topic+": "+(msg.payload).decode())#str.decode adds a b for bytes, this looks better but doesnt have as much info i guess
+    input=(msg.payload).decode()#box;temp;humid;soil;light;time is expected
+    print(input)#debug
+    if input.count(';')==5:
+        input.split(';')
+        #with app context, this whole file should be in interface?
+        box=input[0]
+        temp=input[1]
+        humid=input[2]
+        light=input[3]
+        soil=input[4]
+        new_datum = Data(box=box, temperature=temp,humidity=humid,light=light,soil=soil)
+        try:
+            db.session.add(new_datum)
+            db.session.commit()
+        except:
+            return "error committing"
+
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+#IP="3.27.30.149"#AWS instance IP or "localhost"
+client.connect(IP,1883,60)
+
+client.loop_forever()
