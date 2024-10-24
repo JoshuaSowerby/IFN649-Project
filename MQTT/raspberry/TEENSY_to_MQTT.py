@@ -11,7 +11,7 @@ from IP import IP
 
 import paho.mqtt.publish as publish
 import serial 
-from time import time
+import time
 """
 replace "COM5" with "/dev/rfcomm0"
 """
@@ -30,7 +30,7 @@ while True:
         #if cookedserial is sensor values
         #box;temp;humid;soil;light;counter;
         #assume sensor value
-        if cookedserial.count(';')==6:
+        if cookedserial.count(';')==5:
             inputs=cookedserial.split(';')
             current_counter=inputs[-2]
             if False:#current_counter>change_key_counter:

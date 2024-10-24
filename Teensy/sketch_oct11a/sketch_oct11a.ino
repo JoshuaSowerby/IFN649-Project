@@ -20,6 +20,8 @@ const int BOX_ID = 0;
 
 //global variables
 //int aes_key;
+
+//t 999, h 999, s 0, l 999
 String key;
 int COUNTER = 0;
 float temperature_warning=9999;
@@ -45,7 +47,10 @@ void setup() {
 
   // Setup Serial1 for BlueTooth
   Serial1.begin(9600); // Default communication rate of the Bluetooth module
-
+  temperature_warning=9999;
+  humidity_warning=9999;
+  light_warning=999; //0 is high light
+  soil_warning=10;//0 is low moisture
 }
 
 void loop() {
@@ -76,11 +81,7 @@ void loop() {
     code =inputs[0];
     cmd=inputs[1];
     counter=inputs[2];
-  }
-  //extract counter and convert to integer, if you can't ignore
-  //compare 
-  if (true){//(counter > COUNTER){
-    //Serial1.println(code);
+
     COUNTER = counter;
     switch(code){//we dont want breaks as we always want to run the default then break...there is another way to do this
       //change key
@@ -112,6 +113,7 @@ void loop() {
           
         }
         code=0000;
+        break;
 
       //change sensor warnings
       //it would be good if this canged if we want to care if we are above or below, as well as how to notify, you can do that later if you want
@@ -122,94 +124,76 @@ void loop() {
         code=0000;
         Serial.print("temperature warning changed to ");
         Serial.println(temperature_warning);
-        //break;
+        break;
       case 9001:
         //humidity warning
         //convert cmd to float/int
         humidity_warning=cmd;
         code=0000;
-        //break;
+        break;
       case 9002:
         //soil warning
         //convert cmd to float/int
         soil_warning=cmd;
         code=0000;
-        //break;
+        break;
       case 9003:
         //light warning
         //convert cmd to float/int
         light_warning=cmd;
         code=0000;
-        //break;
-
-      default:
-        //record sensor values
-        //if sensor value is greater than warning, do something
-        //send sensor readings
-        float humidity = dht.readHumidity();
-        float temperature = dht.readTemperature();
-        int soil = analogRead(SOIL_PIN);
-        int light = analogRead(LIGHTPIN);
-
-        
-        //Serial1 is the BT device
-        Serial1.print(BOX_ID);
-        Serial1.print(";");
-        Serial1.print(temperature);
-        Serial1.print(";");
-        Serial1.print(humidity);
-        Serial1.print(";");
-        Serial1.print(soil);
-        Serial1.print(";");
-        Serial1.print(light);
-        Serial1.print(";");
-        out_counter=out_counter+1;
-        Serial1.println(out_counter);
-        /*
-        Serial.print(BOX_ID);
-        Serial.print(";");
-        Serial.print(temperature);
-        Serial.print(";");
-        Serial.print(humidity);
-        Serial.print(";");
-        Serial.print(soil);
-        Serial.print(";");
-        Serial.print(light);
-        Serial.print(";");
-        Serial.println(counter);
-        */
-        //high light = 0, low moisture = 0
-        if ((temperature_warning<=temperature)||(humidity_warning<=humidity)||(soil_warning>=soil)||(light_warning<=light)){//((temperature_warning>=temperature)||(humidity_warning>=humidity)||(soil_warning<=soil)||(light_warning<=light)){
-          digitalWrite(BUZZER, HIGH);
-          /*
-          Serial.print("temperature_warning: ");
-          Serial.println(temperature_warning);
-          Serial.print("temperature: ");
-          Serial.println(temperature);
-
-          Serial.print("humidity_warning");
-          Serial.println(humidity_warning);
-          Serial.print("humidity");
-          Serial.println(humidity);
-
-          Serial.print("soil_warning");
-          Serial.println((soil_warning));
-          Serial.print("soil");
-          Serial.println((soil));
-          
-          Serial.print("light_warning");
-          Serial.println((light_warning));
-          Serial.print("light");
-          Serial.println((light));
-
-          
-          delay(3000);*/
-        }
-        else{
-          digitalWrite(BUZZER, LOW);
-        }
-        code=0;
         break;
     }
   }
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+  int soil = analogRead(SOIL_PIN);
+  int light = analogRead(LIGHTPIN);
+
+  //Serial.print(temperature);
+  //Serial1 is the BT device
+  Serial1.print(BOX_ID);
+  Serial1.print(";");
+  Serial1.print(temperature);
+  Serial1.print(";");
+  Serial1.print(humidity);
+  Serial1.print(";");
+  Serial1.print(soil);
+  Serial1.print(";");
+  Serial1.print(light);
+  Serial1.print(";");
+  out_counter=out_counter+1;
+  Serial1.println(out_counter);
+
+  if ((temperature_warning<temperature)||(humidity_warning<humidity)||(soil_warning>soil)||(light_warning<light)){//((temperature_warning>=temperature)||(humidity_warning>=humidity)||(soil_warning<=soil)||(light_warning<=light)){
+    digitalWrite(BUZZER, HIGH);
+    delay(500);
+    digitalWrite(BUZZER, LOW);
+    if(temperature_warning<temperature){
+      Serial.println("temp");
+      Serial.println(temperature_warning);
+      Serial.println(temperature);
+    }
+    if(humidity_warning<humidity){
+      Serial.println("humid");
+      Serial.println(humidity_warning);
+      Serial.println(humidity);
+    }
+    if(soil_warning>soil){
+      Serial.println("soil");
+      Serial.println(soil_warning);
+      Serial.println(soil);
+    }
+    if(light_warning<light){
+      Serial.println("light");
+      Serial.println(light_warning);
+      Serial.println(light);
+
+    }
+
+  }
+  else{
+    digitalWrite(BUZZER, LOW);
+  }
+
 }
